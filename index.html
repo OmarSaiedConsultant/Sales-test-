@@ -1,378 +1,287 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Master 2026 | عمر سعيد</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6c63ff;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --bg: #0f0f1a;
-            --card-bg: #1a1a2e;
-            --text: #ffffff;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body {
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        #app { width: 100%; max-width: 700px; }
-
-        /* Screens */
-        .screen { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .screen.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* UI Elements */
-        .logo { font-size: 64px; text-align: center; margin-bottom: 10px; }
-        .intro-title { font-size: 28px; text-align: center; font-weight: 700; }
-        .intro-sub { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 14px; }
-
-        .levels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .level-card {
-            background: var(--card-bg);
-            border: 2px solid #2a2a4a;
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-            position: relative;
-            text-align: center;
-        }
-        .level-card:hover:not(.locked) { border-color: var(--primary); transform: translateY(-5px); background: #232342; }
-        .level-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-        .level-card.completed { border-color: var(--success); }
-        
-        .level-icon { font-size: 32px; margin-bottom: 10px; }
-        .level-name { font-size: 16px; font-weight: 700; }
-        .level-desc { font-size: 12px; color: #888; margin-top: 5px; }
-
-        /* Quiz UI */
-        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #2a2a4a; }
-        .timer-val { background: #1a1a2e; border: 1px solid #333; }
-        .timer-val.urgent { color: var(--danger); border-color: var(--danger); }
-
-        .progress-bar { background: #1a1a2e; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
-        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.4s; }
-
-        .question-card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #2a2a4a; margin-bottom: 20px; }
-        .question-text { font-size: 18px; line-height: 1.6; }
-
-        .option-btn {
-            width: 100%; padding: 15px; background: #252545; border: 2px solid transparent;
-            border-radius: 12px; color: #fff; text-align: right; margin-bottom: 10px;
-            cursor: pointer; transition: 0.2s; font-size: 15px;
-        }
-        .option-btn:hover:not(.disabled) { background: #31315e; border-color: var(--primary); }
-        .option-btn.correct { background: #166534 !important; border-color: var(--success); }
-        .option-btn.wrong { background: #991b1b !important; border-color: var(--danger); }
-        .option-btn.disabled { opacity: 0.7; cursor: not-allowed; }
-
-        .feedback-box { padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; border-right: 5px solid; display: none; }
-        .feedback-correct { background: #14532d33; border-color: var(--success); color: #4ade80; }
-        .feedback-wrong { background: #7f1d1d33; border-color: var(--danger); color: #f87171; }
-
-        .btn-primary { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 700; cursor: pointer; }
-        .total-score { text-align: center; background: #6c63ff11; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--primary); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لعبة تدريب المبيعات 2026 - النسخة الشاملة</title>
+<style>
+  /* نفس الستايل الخاص بك لضمان استقرار العرض */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #0f0f1a; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #app { width: 100%; max-width: 700px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  #intro { text-align: center; }
+  .logo { font-size: 56px; margin-bottom: 16px; }
+  .intro-title { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .intro-sub { color: #aaa; font-size: 15px; margin-bottom: 32px; line-height: 1.6; }
+  .levels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .level-card { background: #1a1a2e; border: 1.5px solid #2a2a4a; border-radius: 14px; padding: 18px 12px; cursor: pointer; transition: all .2s; position: relative; text-align: center; }
+  .level-card:hover { border-color: #6c63ff; transform: translateY(-2px); }
+  .level-card.completed { border-color: #22c55e; }
+  .level-icon { font-size: 28px; margin-bottom: 8px; }
+  .level-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .level-desc { font-size: 11px; color: #888; }
+  .total-score-display { background: linear-gradient(135deg, #6c63ff22, #22c55e22); border: 1px solid #6c63ff44; border-radius: 14px; padding: 16px; margin-bottom: 20px; font-size: 18px; font-weight: 700; text-align: center; }
+  
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .progress-bar { background: #1a1a2e; border-radius: 8px; height: 8px; margin-bottom: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #6c63ff, #a89fff); transition: width .4s ease; }
+  .question-card { background: #1a1a2e; border: 1.5px solid #2a2a4a; border-radius: 18px; padding: 28px; margin-bottom: 16px; }
+  .option-btn { width: 100%; background: #1a1a2e; border: 1.5px solid #2a2a4a; border-radius: 12px; padding: 14px 18px; font-size: 14px; color: #ccc; cursor: pointer; text-align: right; margin-bottom: 10px; font-family: inherit; transition: 0.2s; }
+  .option-btn.correct { border-color: #22c55e; background: #22c55e22; color: #4ade80; }
+  .option-btn.wrong { border-color: #ef4444; background: #ef444422; color: #f87171; }
+  .feedback-box { background: #0f0f1a; border-radius: 12px; padding: 16px; margin-bottom: 16px; font-size: 14px; display: none; border-right: 4px solid #6c63ff; line-height: 1.6;}
+  .next-btn { width: 100%; background: #6c63ff; color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; }
+</style>
 </head>
 <body>
-
 <div id="app">
-    <!-- Intro Screen -->
-    <div id="intro" class="screen active">
-        <div class="logo">🎯</div>
-        <div class="intro-title">Sales Master 2026</div>
-        <div class="intro-sub">محاكاة عملية لدورة عمر سعيد الاحترافية</div>
-        <div class="total-score">مجموع نقاطك الكلي: <span id="totalPoints">0</span></div>
-        <div class="levels-grid" id="levelsGrid"></div>
-    </div>
 
-    <!-- Quiz Screen -->
-    <div id="quiz" class="screen">
-        <div class="quiz-header">
-            <div class="badge" id="levelNameBadge"></div>
-            <div id="timer" class="badge timer-val">⏱ 20</div>
-            <div class="badge" style="color:var(--success)">⭐ <span id="liveScore">0</span></div>
-        </div>
-        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
-        <div class="question-card">
-            <div id="questionText" class="question-text"></div>
-        </div>
-        <div id="optionsGrid"></div>
-        <div id="feedback" class="feedback-box"></div>
-        <button id="nextBtn" class="btn-primary" style="display:none;" onclick="handleNext()">التالي</button>
-    </div>
+  <div id="intro" class="screen active">
+    <div class="logo">🚀</div>
+    <div class="intro-title">Sales Training 2026</div>
+    <div class="intro-sub">نظام التدريب التفاعلي - عمر سعيد<br>90 سؤالاً تغطي كافة جوانب الدورة</div>
+    <div class="total-score-display">السكور الكلي: <span id="totalScoreDisplay">0</span></div>
+    <div class="levels-grid" id="levelsGrid"></div>
+  </div>
 
-    <!-- Result Screen -->
-    <div id="result" class="screen" style="text-align: center;">
-        <div id="resultEmoji" style="font-size: 80px;">🏆</div>
-        <h2 id="resultTitle" style="margin: 15px 0;">أحسنت!</h2>
-        <div class="question-card">
-            <p>إجابات صحيحة: <span id="resCorrect" style="color:var(--success)"></span></p>
-            <p>نقاط المستوى: <span id="resScore" style="color:var(--primary)"></span></p>
-        </div>
-        <button class="btn-primary" onclick="location.reload()">العودة للقائمة الرئيسية</button>
+  <div id="quiz" class="screen">
+    <div class="quiz-header">
+      <div id="quizLevelBadge" style="background:#6c63ff22; padding:6px 14px; border-radius:20px; font-size:13px; color:#a89fff;"></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="timerDisplay" style="padding:4px 10px; border-radius:20px; background:#1a1a2e; border:1px solid #2a2a4a;">⏱ 20</div>
+        <div style="background:#22c55e22; padding:6px 14px; border-radius:20px; color:#4ade80;">⭐ <span id="currentScore">0</span></div>
+      </div>
     </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div id="progressText" style="font-size:12px; color:#666; text-align:center; margin-bottom:24px;"></div>
+    <div class="question-card">
+      <div id="questionNumber" style="font-size:11px; color:#666; margin-bottom:10px;"></div>
+      <div id="questionText" style="font-size:17px; line-height:1.6;"></div>
+    </div>
+    <div id="optionsGrid"></div>
+    <div id="feedbackBox" class="feedback-box"></div>
+    <button id="nextBtn" class="next-btn" onclick="nextQuestion()">التالي ←</button>
+  </div>
+
 </div>
 
 <script>
 const LEVELS = [
-    {
-        name: "عقلية المقاتل",
-        icon: "⚔️",
-        questions: [
-            {
-                q: "المدير أبلغك بزيادة التارجت 20% وأنت تشعر بالإحباط. كيف تتصرف حسب 'دائرة التأثير'؟",
-                opts: ["تشتكي لزملائك وتنتظر تعديل القرار", "تركز على زيادة عدد مكالماتك وتحسين الـ Script الخاص بك", "تطلب إجازة لتهدئة أعصابك", "تبحث عن شركة أخرى تارجتها أقل"],
-                correct: 1,
-                exp: "عمر سعيد بيقولك: ركز طاقتك فيما تملك (مهارتك ونشاطك)، التارجت قرار خارجي ورد فعلك قرار داخلي."
-            },
-            {
-                q: "ما هو 'الجسر المكسور' في المبيعات؟",
-                opts: ["عدم وجود بضاعة في المخزن", "الفجوة بين مهاراتك الحالية ومتطلبات التارجت", "الخلاف بين السيلز والمدير", "تعطل نظام السيستم في الشركة"],
-                correct: 1,
-                exp: "الجسر المكسور يعني أن أدواتك الحالية لا توفر لك الوصول للهدف، لذا يجب إصلاح الجسر (المهارة) أولاً."
-            }
-        ]
-    },
-    {
-        name: "الخرافات والأنماط",
-        icon: "💡",
-        questions: [
-            {
-                q: "عميل من النمط (المحلل - Analyst) يغرقك في التفاصيل الفنية. ما هو أنجح أسلوب معه؟",
-                opts: ["احكِ له قصص نجاح مؤثرة لعملاء سابقين", "قدم له جداول بيانات، أرقام دقيقة، ومقارنات فنية", "حاول كسبه اجتماعياً بالمزاح والود", "قل له 'ثق فيا نحن الأفضل في السوق'"],
-                correct: 1,
-                exp: "النمط المحلل يحتاج لبيانات صلبة ليشعر بالأمان قبل اتخاذ القرار."
-            },
-            {
-                q: "خرافة 'اتكلم كتير تبيع كتير'.. ما هو البديل العلمي لها؟",
-                opts: ["اصمت تماماً ودع العميل يتحدث", "قاعدة الـ 7 ثواني: اخطف الانتباه أولاً ثم اسأل", "تحدث بسرعة لتنهي المكالمة", "اشرح كل مواصفات المنتج في أول دقيقة"],
-                correct: 1,
-                exp: "العميل يقرر الاستماع لك في أول 7 ثوانٍ، اخطف عقله بـ Hook قوي."
-            }
-        ]
-    },
-    {
-        name: "فلترة العميل (BANT)",
-        icon: "📊",
-        questions: [
-            {
-                q: "عميل مهتم جداً لكن اكتشفت أنه ليس الشخص الذي يوقع الشيكات. ما هو الحرف الناقص في BANT؟",
-                opts: ["حرف B (الميزانية)", "حرف A (الصلاحية - Authority)", "حرف N (الاحتياج)", "حرف T (الوقت)"],
-                correct: 1,
-                exp: "بدون الوصول لصاحب الصلاحية (Authority)، أنت تبيع لرسول وليس للمشتري الحقيقي."
-            },
-            {
-                q: "إذا كان الـ Conversion Rate الخاص بك 2%، فكم Lead تحتاج لتحقيق 10 بيعات؟",
-                opts: ["200 Lead", "500 Lead", "100 Lead", "1000 Lead"],
-                correct: 1,
-                exp: "لعبة الأرقام: 2% تعني 2 من كل 100، إذن تحتاج 500 لتصل لـ 10."
-            }
-        ]
-    },
-    {
-        name: "احتراف المكالمة",
-        icon: "📞",
-        questions: [
-            {
-                q: "العميل يقول: 'أنا مشغول، ادخل في الموضوع وقولي السعر'. كيف تستخدم الـ Trailer هنا؟",
-                opts: ["تعطيه السعر فوراً", "تقول: 'أنا لن أبيع لك الآن، لكن سأخبرك في 30 ثانية كيف نوفر لعملائنا 20% من تكاليفهم'", "تعتذر وتغلق الخط", "تقول له أن السعر سيعرفه في نهاية العرض"],
-                correct: 1,
-                exp: "الـ Trailer Technique تهدف لخلق فضول يجعله يفرغ لك وقته فوراً."
-            },
-            {
-                q: "ما هي لعبة 'البينج بونج' في المكالمة البيعية؟",
-                opts: ["أن تتحدث بسرعة فائقة", "تبادل الأسئلة والإجابات لخلق حوار وليس مونولوج", "أن ترمي المسؤولية على المدير", "تكرار السعر أكثر من مرة"],
-                correct: 1,
-                exp: "البيع هو حوار متبادل (Ping-Pong)، إذا كنت أنت الوحيد الذي يتحدث فأنت لا تبيع."
-            }
-        ]
-    },
-    {
-        name: "المنطقة العمياء",
-        icon: "🛡️",
-        questions: [
-            {
-                q: "عميل يقول: 'أتعامل مع شركة أخرى منذ 5 سنوات ومرتاح'. كيف تكتشف الـ Blind Spot؟",
-                opts: ["قل له أن شركتك أرخص", "اسأله: 'لو هناك شيء واحد تتمنى تحسينه في خدمتهم الحالية، ماذا سيكون؟'", "هاجم الشركة المنافسة", "استسلم وابحث عن عميل غيره"],
-                correct: 1,
-                exp: "هذا السؤال يجعله يبحث عن 'النقص' الذي لم يكن يلاحظه بسبب الاعتياد."
-            },
-            {
-                q: "متى تستخدم لغة 'الغريزة' في الإقناع؟",
-                opts: ["مع الموظفين الصغار", "مع أصحاب القرار لتحفيز الخوف من الخسارة أو الطمع في الربح", "عند شرح التفاصيل الفنية", "عند تقديم خصم بسيط"],
-                correct: 1,
-                exp: "أصحاب القرار تحركهم الغرائز الأساسية (الخوف من فقدان الحصة السوقية أو الرغبة في السيطرة)."
-            }
-        ]
-    },
-    {
-        name: "الإغلاق الساحق",
-        icon: "🏆",
-        questions: [
-            {
-                q: "منتجك سعره 12,000 جنيه والعميل يراه مرتفعاً. كيف تستخدم 'سحر الأرقام'؟",
-                opts: ["تقول له 'الجودة تكلف دائماً'", "تقول له 'تكلفته عليك هي 33 جنيه يومياً.. أقل من سعر وجبة غداء'", "تعطيه خصم 50% فوراً", "تقول له 'يمكنك الدفع كاش'"],
-                correct: 1,
-                exp: "تفتيت السعر (Chunking) يزيل الألم النفسي المرتبط بالرقم الكبير."
-            },
-            {
-                q: "ما هو 'التعاطف التكتيكي'؟",
-                opts: ["أن تشفق على ظروف العميل", "أن تعكس مشاعر العميل وكلماته ليشعر أنك تفهمه تماماً وتكسر دفاعاته", "أن توافق على كل طلباته", "أن تحكي له مشاكلك الشخصية"],
-                correct: 1,
-                exp: "التعاطف التكتيكي أداة مخابراتية تجعل العميل يثق بك لا شعورياً."
-            }
-        ]
-    }
+  {
+    id: 0,
+    name: "1. العدو الأخطر",
+    icon: "⚔️",
+    desc: "10 أسئلة (العقلية)",
+    questions: [
+      { q: "ما هو الطرف الذي يمثل ضغط 'البقاء' (Survival Mode) في مثلث العدو؟", opts: ["المنافس", "الشركة والتارجت", "السوق", "المنتج"], correct: 1, explain: "الشركة والتارجت يضعان السيلز في وضع دفاعي يسمى Survival Mode." },
+      { q: "موقف: العميل يرفض سماعك ويشتكي من السعر. أين تكمن سيطرتك هنا؟", opts: ["في تغيير سعر الشركة", "في لوم العميل", "في تطوير مهارة التعامل مع الاعتراض (دائرة التأثير)", "في انتظار خصومات جديدة"], correct: 2, explain: "دائرة التأثير تركز على مهاراتك الشخصية فقط." },
+      { q: "ما الهدف من تطبيق الـ 5 Whys؟", opts: ["تحليل المنتج", "معرفة هدفك العميق من الوظيفة", "إحراج العميل", "زيادة عدد المكالمات"], correct: 1, explain: "تساعدك على اكتشاف المحرك الداخلي (The Purpose) لاستكمال الرحلة." },
+      { q: "تحسين 1% يومياً في مهاراتك يعني تحسن بمقدار كم في السنة؟", opts: ["10 مرات", "37 مرة", "ضعف واحد", "50%"], correct: 1, explain: "هذا هو الأثر التراكمي للتعلم المستمر (Compound Effect)." },
+      { q: "موقف: التارجت زاد للضعف (2X). ما هو الحل الجذري؟", opts: ["العمل لساعات مضاعفة بنفس الطريقة", "بناء 'جسر مهارات' أقوى وأعرض موازٍ للتارجت", "الشكوى للمدير", "تجاهل الزيادة"], correct: 1, explain: "التارجت العالي يتطلب Scale Up لمستواك الفني وليس مجرد مجهود بدني." },
+      { q: "لماذا تسمى منطقة الأمان (Safe Zone) بالعدو؟", opts: ["لأنها مريحة جداً", "لأنها تمنع النمو وتجعلك تقبل بالقليل", "لأنها تزيد التوتر", "لأنها مكان ضيق"], correct: 1, explain: "لا يوجد نمو داخل منطقة الراحة." },
+      { q: "المعادلة: (علاقة × مهارة × دوافع) هي الطريق لـ:", opts: ["الراتب", "تحقيق التارجت", "كسب ود المدير", "توفير الوقت"], correct: 1, explain: "هذه الأركان الثلاثة هي أساس أي عملية بيع ناجحة." },
+      { q: "موقف: أنت تشعر بالتوتر والاحتياج للبيعة. ماذا يسمى هذا الوضع؟", opts: ["وضع النجاح", "Survival Mode", "Professional Mode", "Target Mode"], correct: 1, explain: "هذا الوضع يهرب العميل لأنك تظهر بمظهر 'المحتاج' (Neediness)." },
+      { q: "السيطرة الحقيقية تبدأ من:", opts: ["الظروف الخارجية", "الروتين اليومي الصغير (السيطرة على النفس)", "قرارات الإدارة", "رغبات العميل"], correct: 1, explain: "من لا يسيطر على يومه لا يمكنه السيطرة على أرقامه." },
+      { q: "ما هو 'الجسر المكسور'؟", opts: ["عطل في السيارة", "نقص في مهاراتك يمنعك من بلوغ الهدف", "رفض العميل لللقاء", "انتهاء الباقة"], correct: 1, explain: "هو الفجوة بين قدراتك الحالية والنتيجة المطلوبة." }
+    ]
+  },
+  {
+    id: 1,
+    name: "2. الخرافات الخمس",
+    icon: "💡",
+    desc: "15 سؤالاً (الوعي البيعي)",
+    questions: [
+      { q: "خرافة 'ساعد متبيعش' تعني أن دورك هو:", opts: ["بائع ضاغط", "Problem Solver (حلّال مشاكل)", "صديق العميل", "جامع بيانات"], correct: 1, explain: "البيع هو نتيجة ثانوية لمساعدة العميل في حل مشكلته." },
+      { q: "موقف: العميل يتحدث كثيراً عن مشاكله. ماذا تفعل؟", opts: ["تقاطعه لتعرض المنتج", "تستمع بتركيز لتكتشف الـ Pain", "تنهي المكالمة", "تطلب منه السكوت"], correct: 1, explain: "الاستماع هو أقوى أداة بيعية (خرافة الكلام الكثير)." },
+      { q: "شنطة 'المنتج هو البطل' تعني خطأ أن:", opts: ["المنتج وسيلة فقط", "المنتج هو أهم شيء في البيعة", "العميل هو البطل", "النتيجة هي الأهم"], correct: 1, explain: "الحقيقة أن العميل هو البطل ومنتجم هو 'السلاح' الذي سيساعده." },
+      { q: "ما هي لغة العميل (المحلل)؟", opts: ["الهزار", "الأرقام والبيانات الموثقة", "السرعة", "العلاقات"], correct: 1, explain: "المحلل لا يشتري إلا بالمنطق والدليل." },
+      { q: "خرافة 'إحنا الأفضل' يفضل استبدالها بـ:", opts: ["نحن الأرخص", "نحن الأنسب (Right Fit)", "نحن الأقدم", "نحن الأكبر"], correct: 1, explain: "العميل يبحث عن الأنسب لمشكلته وليس الأفضل في المطلق." },
+      { q: "قاعدة الـ 7 ثواني تهدف إلى:", opts: ["إغلاق البيعة", "خطف الانتباه (Hook)", "معرفة السعر", "إنهاء المكالمة"], correct: 1, explain: "الانطباع الأول يتكون في 7 ثوانٍ." },
+      { q: "موقف: العميل الموجه (Driver) سألك عن السعر فوراً. ماذا تفعل؟", opts: ["تحكي قصة الشركة", "تعطيه الخلاصة والنتائج فوراً", "تؤجل الرد", "تطلب ميعاد"], correct: 1, explain: "الموجه يكره تضييع الوقت." },
+      { q: "ما معنى Pain + Press + Solve = $$؟", opts: ["اضغط على العميل", "اكتشف الألم، اضغط عليه، ثم قدم الحل", "بع بالقوة", "ارفع السعر"], correct: 1, explain: "هذه دورة صناعة الاحتياج لدى العميل." },
+      { q: "العميل (المنسق - Amiable) يشتري بناءً على:", opts: ["السرعة", "الأمان والثقة والعلاقة", "الخصم", "التكنولوجيا"], correct: 1, explain: "المنسق يحتاج لبيئة آمنة غير ضاغطة." },
+      { q: "خرافة 'السعر هو العائق'.. الحقيقة هي:", opts: ["العميل فقير", "عدم إدراك القيمة (Value)", "المنافس أرخص", "السوق نائم"], correct: 1, explain: "الناس يدفعون في القيمة التي تخدم أهدافهم." },
+      { q: "النسبة الذهبية للكلام والاستماع هي:", opts: ["50-50", "30 كلام - 70 استماع", "90 كلام - 10 استماع", "40 كلام - 60 استماع"], correct: 1, explain: "كلما استمعت أكثر، بعت أكثر." },
+      { q: "العميل (الاجتماعي) يحفزه:", opts: ["البيانات", "التقدير والظهور الاجتماعي", "الهدوء", "الأرقام"], correct: 1, explain: "الاجتماعي يشتري بالتقدير والمكانة." },
+      { q: "موقف: عميل يشتكي من تجربة سابقة سيئة. ماذا تفعل؟", opts: ["تدافع عن شركتك", "تتفهم ألمه أولاً (التعاطف التكتيكي)", "تهاجم الشركة السابقة", "تتجاهل الموضوع"], correct: 1, explain: "امتصاص الغضب هو أول خطوة في المعالجة." },
+      { q: "شنطة 'إحنا مش الأفضل' تعني:", opts: ["أننا سيئون", "أننا متخصصون في حالات معينة", "أننا الأغلى", "أننا نكذب"], correct: 1, explain: "التخصص والملاءمة أقوى من الادعاء العام بالأفضلية." },
+      { q: "ماذا يبيع السيلز فعلياً؟", opts: ["بضاعة", "حلول ونتائج (Results)", "صور", "كلام"], correct: 1, explain: "العميل يشتري 'النسخة الأفضل من نفسه' بعد استخدام منتجك." }
+    ]
+  },
+  {
+    id: 2,
+    name: "3. رحلة العميل والأرقام",
+    icon: "📊",
+    desc: "15 سؤالاً (القمع البيعي)",
+    questions: [
+      { q: "ما هو الـ Lead؟", opts: ["عميل اشترى بالفعل", "شخص لديه بيانات تواصل ولم يتم تأهيله", "صاحب شركة", "عميل غاضب"], correct: 1, explain: "اللييد هو مجرد رقم أو فرصة لم يتم فلترتها بعد." },
+      { q: "حرف B في نظام BANT يرمز لـ:", opts: ["البراند", "الميزانية (Budget)", "البنك", "السلوك"], correct: 1, explain: "هل يملك العميل المال الكافي للحل؟" },
+      { q: "موقف: عميل يحتاج منتجك جداً لكن ليس لديه ميزانية الآن. ماذا تسميه؟", opts: ["Lead", "Prospect", "Hot Lead", "Unqualified"], correct: 3, explain: "بدون ميزانية حالية أو قريبة، هو غير مؤهل للبيع الآن." },
+      { q: "الـ Conversion Rate (معدل التحويل) يقاس بـ:", opts: ["عدد المكالمات", "(عدد البيعات ÷ عدد المحاولات) × 100", "الراتب", "ساعات العمل"], correct: 1, explain: "هو المعيار الأدق لقوة مهاراتك." },
+      { q: "موقف: لديك 100 ليد، بعت لـ 5. كم الـ CR الخاص بك؟", opts: ["10%", "5%", "50%", "1%"], correct: 1, explain: "5 من 100 تساوي 5%." },
+      { q: "حرف A في BANT يعني:", opts: ["العمر", "الصلاحية (Authority)", "المنطقة", "الطموح"], correct: 1, explain: "هل هو صاحب القرار أم مجرد رسول؟" },
+      { q: "قاعدة 80/20 في المبيعات تعني:", opts: ["80% من الربح يأتي من 20% من العملاء", "80% كلام و 20% استماع", "80% تعب و 20% راحة", "80% عملاء و 20% ليدز"], correct: 0, explain: "ركز مجهودك على العملاء عاليي القيمة." },
+      { q: "ما هو الـ Hot Lead؟", opts: ["عميل جديد", "عميل مستعد للشراء الآن (جاهز مالياً ونفسياً)", "عميل يتحدث كثيراً", "عميل قديم"], correct: 1, explain: "هذا العميل هو أولويتك القصوى." },
+      { q: "حرف T في BANT يعني:", opts: ["التكنولوجيا", "التوقيت (Time Frame)", "التارجت", "النوع"], correct: 1, explain: "متى ينوي العميل اتخاذ القرار؟" },
+      { q: "موقف: اكتشفت أن الشخص الذي تحادثه ليس صاحب القرار. ماذا تفعل؟", opts: ["تنهي المكالمة فوراً", "تطلب بلباقة ضم صاحب القرار للحوار", "تكمل الشرح له فقط", "تخفض السعر له"], correct: 1, explain: "لا تضيع مجهودك مع من لا يملك التوقيع." },
+      { q: "لماذا يسمى 'قمع' المبيعات (Sales Funnel)؟", opts: ["لأنه واسع من الأعلى وضيق من الأسفل", "لأنه سريع", "لأنه يجمع الأتربة", "لأنه قديم"], correct: 0, explain: "لأننا ندخل كميات كبيرة من الفرص لنخرج بصفوات الصفقات." },
+      { q: "فلترة العميل (Qualifying) تهدف إلى:", opts: ["طرد العملاء", "توفير وقتك للعملاء الجادين فقط", "زيادة المكالمات", "التكبر"], correct: 1, explain: "وقتك هو أغلى ما تملك." },
+      { q: "موقف: العميل لديه احتياج وميزانية لكن لا يوجد 'توقيت' (T). ماذا تفعل؟", opts: ["تضغط عليه", "تضعه في نظام المتابعة (Follow up)", "تنساه", "تبيعه للمنافس"], correct: 1, explain: "العملاء الذين ينقصهم التوقيت يحتاجون رعاية طويلة المدى." },
+      { q: "الـ Funnel الصحيح يبدأ بـ:", opts: ["الإغلاق", "التنقيب (Prospecting)", "المتابعة", "السعر"], correct: 1, explain: "البحث عن فرص جديدة هو الوقود." },
+      { q: "حرف N في BANT يعني:", opts: ["الاسم", "الاحتياج (Need)", "الشبكة", "اللا شيء"], correct: 1, explain: "هل هناك مشكلة حقيقية يحلها منتجك؟" }
+    ]
+  },
+  {
+    id: 3,
+    name: "4. فن المكالمات",
+    icon: "📞",
+    desc: "15 سؤالاً (الأسلحة الثلاثة)",
+    questions: [
+      { q: "ما هو سلاح الـ Trailer؟", opts: ["شرح المنتج كاملاً", "خطف الانتباه في أول 10 ثوانٍ بمشكلة أو نتيجة", "طلب السعر", "الاعتذار"], correct: 1, explain: "زي تريلر الفيلم؛ بيخلي العميل عاوز يسمع الباقي." },
+      { q: "لعبة الـ Ping-Pong في المكالمة تعني:", opts: ["السرعة", "تبادل الأسئلة والإجابات لخلق حوار", "التوتر", "السكوت"], correct: 1, explain: "لا تكن 'راديو'؛ اجعل العميل يشاركك الحوار." },
+      { q: "موقف: العميل قال 'مش مهتم' في أول المكالمة. ماذا تفعل؟", opts: ["تعتذر وتقفل", "تستخدم Hook عكسي أو Trailer بديل", "تصرخ", "تتجاهل وتكمل الشرح"], correct: 1, explain: "كلمة 'مش مهتم' هي رد فعل دفاعي يحتاج لكسر انتباه." },
+      { q: "تقنية X or Y تعني:", opts: ["وهم الاختيار (مثلاً: نتقابل الأحد ولا الثلاثاء؟)", "مهاجمة المنافس", "طلب السعر", "كود سري"], correct: 0, explain: "تسهل على العميل اتخاذ القرار وتوجهه لما تريد." },
+      { q: "ما هو الـ Hook في المكالمة؟", opts: ["طريقة إلقاء التحية", "جملة تخطف عقل العميل وتوقفه عن التفكير في شيء آخر", "سعر المنتج", "اسم الشركة"], correct: 1, explain: "بدون Hook العميل سيعتبر مكالمتك 'إزعاج'." },
+      { q: "موقف: العميل سألك 'إنت مين وبتكلمني ليه؟'. الرد يكون بـ:", opts: ["الاسم والشركة فقط", "Trailer يوضح القيمة التي سيعود عليه منها", "السكوت", "السعر"], correct: 1, explain: "العميل لا يهتم بـ 'من أنت' بل بـ 'ماذا ستفعل لي'." },
+      { q: "ما معنى 'سيب رجل قبل ما تقفل'؟", opts: ["اترك هدية", "خلق سبب للمتابعة القادمة (Next Step)", "طلب رقم آخر", "التأخر في الكلام"], correct: 1, explain: "يجب ألا تنتهي المكالمة بدون موعد أو خطوة واضحة." },
+      { q: "لماذا تفشل 90% من المكالمات الباردة؟", opts: ["السعر غالي", "لأنها مملة ومكررة وبدون Hook", "العملاء فقراء", "المنتج سيء"], correct: 1, explain: "التكرار والملل هما أعداء التليفون." },
+      { q: "موقف: العميل بدأ يسرد تفاصيل حياته. كيف تنهي ذلك باحتراف؟", opts: ["تقوله 'اسكت'", "تستخدم سؤالاً موجهاً (Close-ended) لتعود للمسار", "تقفل في وجهه", "تنام"], correct: 1, explain: "السؤال الموجه يعيد السيطرة للسيلز." },
+      { q: "ما هو هدف المكالمة الأولى (Cold Call)؟", opts: ["البيع فوراً", "بيع الموعد التالي (The Appointment)", "تحصيل الفلوس", "شرح الكتالوج"], correct: 1, explain: "نادراً ما يتم البيع من مكالمة واحدة؛ هدفك هو 'الخطوة التالية'." },
+      { q: "تقنية 'الإحصائية الصادمة' تستخدم في:", opts: ["نهاية المكالمة", "الـ Trailer لخطف الانتباه", "عند الدفع", "المتابعة"], correct: 1, explain: "الأرقام الصادمة تخلق احتياجاً فورياً للفهم." },
+      { q: "التعاطف التكتيكي (Tactical Empathy) يعني:", opts: ["أن تبكي مع العميل", "أن تعكس مشاعر العميل بكلامك ليشعر أنك تفهمه", "أن توافق على الخصم", "أن تحكي مشاكلك"], correct: 1, explain: "يجعل العميل ينزل دفاعاته النفسية أمامك." },
+      { q: "موقف: العميل صوتك مش واضح. ماذا تفعل؟", opts: ["تصرخ", "تستأذنه في معاودة الاتصال لاحقاً باحترافية", "تكمل", "تشتكي له"], correct: 1, explain: "المكالمة الضعيفة تقنياً تضعف صورتك الذهنية." },
+      { q: "الأسئلة المفتوحة (Open-ended) تبدأ بـ:", opts: ["هل؟", "كيف؟ / لماذا؟ / احكي لي..", "متى؟", "أين؟"], correct: 1, explain: "تجبر العميل على الكلام ليعطيك معلومات (بينج بونج)." },
+      { q: "ما هو الـ Tone of Voice الصحيح؟", opts: ["عالي جداً", "هادئ، واثق، ومبتسم (الابتسامة تُسمع)", "حزين", "سريع جداً"], correct: 1, explain: "نبرة صوتك هي 80% من تأثيرك في التليفون." }
+    ]
+  },
+  {
+    id: 4,
+    name: "5. معالجة الاعتراضات",
+    icon: "🛡️",
+    desc: "15 سؤالاً (المنطقة العمياء)",
+    questions: [
+      { q: "ما هو الـ Blind Spot في الاعتراض؟", opts: ["عيب في المنتج", "السبب الحقيقي الخفي وراء اعتراض العميل", "العميل لا يرى السيلز", "مشكلة في الإضاءة"], correct: 1, explain: "العملاء لا يقولون الحقيقة دائماً؛ ابحث عن 'السبب وراء السبب'." },
+      { q: "موقف: العميل قال 'السعر غالي'. ماذا تفعل؟", opts: ["تخفض السعر فوراً", "تسأله: 'غالي مقارنة بإيه؟' لتفهم مرجعيته", "تغضب", "تقول له 'أنت لا تفهم'"], correct: 1, explain: "الاعتراض على السعر يحتاج لفلترة (هل هو غالي أم لا يملك المال؟)." },
+      { q: "قاعدة 'حول الاعتراض لسؤال' تهدف لـ:", opts: ["تطويل المكالمة", "جعل العميل يحل اعتراضه بنفسه أو كشف السبب الخفي", "إحراج العميل", "الهروب"], correct: 1, explain: "عندما تسأله عن اعتراضه، هو من سيوضح لك كيف تبيعه." },
+      { q: "ما هي لغات الإقناع الثلاث؟", opts: ["عربي وإنجليزي", "الأرقام - العواطف - الغريزة", "سمعي وبصري", "رسمي وغير رسمي"], correct: 1, explain: "كل عميل يحتاج لغة معينة ليقتنع." },
+      { q: "موقف: عميل متردد جداً. أي لغة تستخدم؟", opts: ["الأرقام فقط", "الغريزة (الخوف من الفقد - Scarcity)", "العواطف", "لا شيء"], correct: 1, explain: "الخوف من الخسارة أقوى محفز للمتردد." },
+      { q: "التعاطف (Empathy) في معالجة الاعتراض يعني:", opts: ["الموافقة على الاعتراض", "فهم شعور العميل وتوضيحه له (أنا متفهم قلقك من..)", "الاعتذار", "تغيير الموضوع"], correct: 1, explain: "يجب أن يشعر العميل أنك في صفه ولست ضده." },
+      { q: "موقف: العميل قال 'هفكر وأرد عليك'. الرد الاحترافي يكون:", opts: ["ماشي سلام", "استكشاف ما الذي سيفكر فيه (هل هناك نقطة لم نوضحها؟)", "تتصل به كل ساعة", "تزعل"], correct: 1, explain: "هفكر = هناك اعتراض خفي لم يذكر." },
+      { q: "لماذا لا يجب أن ترد فوراً (Defensive) على الاعتراض؟", opts: ["لأنك ستظهر بمظهر المدافع وليس المستشار", "لأنك ستنسى", "لأن الوقت ضيق", "لأن العميل سيهرب"], correct: 0, explain: "المدافع يهاجم؛ المستشار يستكشف." },
+      { q: "استخدام 'الخوف من الفقد' (FOMO) يكون فعالاً عندما:", opts: ["يكون العرض متاحاً للأبد", "يكون هناك كمية محدودة أو وقت محدود فعلياً", "يكون السعر رخيصاً", "يكون العميل واثقاً"], correct: 1, explain: "الناس يكرهون ضياع الفرص." },
+      { q: "موقف: العميل يقارن بينك وبين منافس أرخص. ماذا تفعل؟", opts: ["تهاجم المنافس", "توضح القيمة المضافة التي لا يملكها المنافس", "تخفض سعرك لأقل منه", "تنسحب"], correct: 1, explain: "ركز على ميزتك التنافسية وليس عيب غيرك." },
+      { q: "ما هو الـ Objection Handling Framework؟", opts: ["اسمع - تفهم - اسأل - عالج", "رد - هاجم - اغلق", "اسكت - اسمع - بيع", "اضحك - بع - امش"], correct: 0, explain: "هذا هو الترتيب المنطقي لاحتواء أي اعتراض." },
+      { q: "لغة 'العواطف' تستخدم فيها:", opts: ["جداول إكسيل", "قصص نجاح لعملاء مشابهين (Social Proof)", "تهديد", "صمت"], correct: 1, explain: "الناس تحب أن تعرف أن غيرهم جرب ونجح." },
+      { q: "الاعتراض هو علامة على:", opts: ["الفشل", "الاهتمام (العميل الذي يعترض هو عميل يفكر في الشراء)", "الكراهية", "الملل"], correct: 1, explain: "العميل غير المهتم لا يتعب نفسه بالاعتراض؛ هو يغلق الخط فقط." },
+      { q: "موقف: العميل قال 'شركتكم سمعتها وحشة'. ماذا تفعل؟", opts: ["تسبه", "تسأله عن المصدر أو التجربة المحددة لتوضيح الحقائق", "تتفق معه", "تقفل"], correct: 1, explain: "واجه الشائعات بالحقائق والأسئلة المحددة." },
+      { q: "أفضل وقت لمعالجة الاعتراض هو:", opts: ["بعد المكالمة", "قبل أن يذكره العميل (لو كنت تتوقعه)", "في نهاية الشهر", "أبداً"], correct: 1, explain: "المبادرة بمعالجة الاعتراض المتوقع تبني ثقة جبارة." }
+    ]
+  },
+  {
+    id: 5,
+    name: "6. فن الإغلاق",
+    icon: "🏆",
+    desc: "20 سؤالاً (الخاتمة والنجاح)",
+    questions: [
+      { q: "ما هو إغلاق بنجامين فرانكلين؟", opts: ["طلب الفلوس فوراً", "كتابة المميزات والعيوب في ورقة مع العميل لتوضيح القيمة", "الخصم الكبير", "التحدث بسرعة"], correct: 1, explain: "يستخدم مع العميل التحليلي لمساعدته على رؤية المنطق." },
+      { q: "إغلاق 'الافتراض' (Assumptive Close) يعني:", opts: ["توقع رفض العميل", "التصرف وكأن العميل قرر الشراء فعلاً (نبدأ التنفيذ الأحد؟)", "السكوت", "الخوف"], correct: 1, explain: "يوفر على العميل عناء التردد." },
+      { q: "موقف: العميل قال 'نعم' لكل شيء. ماذا تفعل؟", opts: ["تكمل شرح", "تطلب الإغلاق فوراً وتوقع العقد", "تحكي قصة جديدة", "تنسى"], correct: 1, explain: "عندما يوافق العميل، توقف عن البيع وابدأ في الإغلاق." },
+      { q: "إغلاق الـ X or Y يسمى أيضاً بـ:", opts: ["إغلاق القوة", "إغلاق الاختيار البديل (Alternative Close)", "إغلاق السعر", "إغلاق الوقت"], correct: 1, explain: "مثلاً: تحب الاستلام في البيت ولا المكتب؟" },
+      { q: "ما هو الـ Up-selling؟", opts: ["بيع منتج أرخص", "بيع منتج أعلى قيمة أو مميزات إضافية لنفس العميل", "طرد العميل", "رفع السعر بدون سبب"], correct: 1, explain: "زيادة حجم الصفقة بتوفير قيمة أكبر." },
+      { q: "موقف: العميل متردد في آخر لحظة. ماذا تستخدم؟", opts: ["إغلاق الخطة الآمنة (ضمان استرداد أو تجربة)", "التهديد", "الصراخ", "السكوت"], correct: 0, explain: "الأمان يكسر آخر حاجز للخوف." },
+      { q: "ما هو الـ Cross-selling؟", opts: ["بيع منتج منافس", "بيع منتجات مكملة (مثلاً جراب مع الموبايل)", "البيع المتقاطع مع الزملاء", "لا شيء"], correct: 1, explain: "زيادة مبيعاتك بتقديم منتجات مرتبطة." },
+      { q: "أكبر خطأ في الإغلاق هو:", opts: ["طلب السعر", "عدم طلب البيعة أصلاً (Closing) بسبب الخوف من الرفض", "الكلام ببطء", "الابتسامة"], correct: 1, explain: "سيلز كثيرون يشرحون جيداً لكن لا يطلبون المال!" },
+      { q: "إغلاق 'الهدية' (Bonus Close) يعني:", opts: ["إعطاء المنتج مجاناً", "إضافة قيمة بسيطة أو خدمة مجانية عند الشراء الآن", "دفع رشوة", "لا شيء"], correct: 1, explain: "تحفيز بسيط لإتمام العملية." },
+      { q: "موقف: العميل اشترى. ماذا تفعل تالياً؟", opts: ["تختفي", "تطلب ترشيحات (Referrals) وتبدأ خدمة ما بعد البيع", "تنام", "تغير رقمك"], correct: 1, explain: "البيع الحقيقي يبدأ بعد أول شيك؛ العميل الراضي هو أفضل مسوق لك." },
+      { q: "ما هو 'تأثير الندم' (Buyer's Remorse)؟", opts: ["ندم السيلز", "شعور العميل بالشك بعد الشراء مباشرة وحاجته للتأكيد", "رفض البيعة", "فرحة العميل"], correct: 1, explain: "يجب أن تطمئن العميل بعد الشراء أنه أخذ القرار الأصح." },
+      { q: "إغلاق 'الخسارة' يركز على:", opts: ["الربح", "ما سيفقده العميل لو لم يأخذ القرار الآن", "السعر", "الشركة"], correct: 1, explain: "ألم الخسارة أقوى من لذة المكسب بمرتين." },
+      { q: "موقف: العميل قال 'لا' نهائية. ماذا تفعل؟", opts: ["تسبه", "تخرج باحترافية وتترك الباب موارباً للمستقبل", "تبكي", "تصر عليه"], correct: 1, explain: "حافظ على برستيجك وعلى علاقتك للمستقبل." },
+      { q: "ما هو الـ Referral؟", opts: ["عميل جديد مرشح من عميل قديم", "خصم", "شكوى", "موظف جديد"], correct: 0, explain: "أقوى وأسهل أنواع البيع." },
+      { q: "إغلاق 'التلخيص' يعني:", opts: ["اختصار المكالمة", "إعادة ذكر كل المميزات التي وافق عليها العميل قبل طلب القرار", "السكوت", "كتابة تقرير"], correct: 1, explain: "يجعل العميل يقول 'نعم' داخلياً عدة مرات." },
+      { q: "متى تستخدم إغلاق 'الافتراض'؟", opts: ["مع العميل الغاضب", "عندما تكون الإشارات إيجابية والثقة عالية", "مع العميل الجديد جداً", "أبداً"], correct: 1, explain: "يتطلب ثقة متبادلة." },
+      { q: "ما هي 'إشارات الشراء' (Buying Signals)؟", opts: ["صمت العميل", "أسئلة العميل عن التفاصيل، المواعيد، أو السعر", "إغلاق الخط", "كلام العميل عن المنافس"], correct: 1, explain: "عندما يسأل 'هتستلموا إمتى؟' هو يشتري بعقله." },
+      { q: "إغلاق الـ Puppy Dog يعني:", opts: ["بيع حيوانات", "ترك المنتج للعميل لتجربته لفترة (Trial) مجانية", "النباح", "لا شيء"], correct: 1, explain: "بمجرد أن يجرب العميل القيمة، لن يتخلى عنها." },
+      { q: "لماذا يجب أن تكون 'صياد ترشيحات'؟", opts: ["لأنك تحب الصيد", "لأن العميل المرشح نسبة إغلاقه أعلى بـ 400%", "لأن المدير طلب ذلك", "للتسلية"], correct: 1, explain: "الثقة تنتقل من العميل القديم للجديد." },
+      { q: "الكلمة الأخيرة في الدورة:", opts: ["البيع موهبة", "البيع مهارة وعلم وعقلية وانضباط", "البيع حظ", "البيع تعب"], correct: 1, explain: "كلنا يمكننا أن نصبح محترفين بالتعلم والتطبيق." }
+    ]
+  }
 ];
 
-let curLevelIdx = 0;
-let curQuestIdx = 0;
-let totalScore = 0;
-let levelScore = 0;
-let correctCount = 0;
-let timer;
-let timeLeft = 20;
+let currentLevel = 0, currentQuestion = 0, score = 0, timer = null, timeLeft = 20, savedScores = {};
 
-function initMenu() {
-    const grid = document.getElementById('levelsGrid');
-    grid.innerHTML = '';
-    const saved = JSON.parse(localStorage.getItem('salesMasterProgress') || '{}');
-    let totalInStorage = 0;
-
-    LEVELS.forEach((lv, i) => {
-        const isLocked = i > 0 && !saved[i-1];
-        const isDone = saved[i];
-        if(isDone) totalInStorage += isDone.score;
-
-        const card = document.createElement('div');
-        card.className = `level-card ${isLocked ? 'locked' : ''} ${isDone ? 'completed' : ''}`;
-        card.innerHTML = `
-            <div class="level-icon">${lv.icon}</div>
-            <div class="level-name">${lv.name}</div>
-            <div class="level-desc">${lv.questions.length} مواقف بيعية</div>
-            ${isDone ? '<div style="color:var(--success); font-size:12px;">✅ مكتمل</div>' : ''}
-        `;
-        if(!isLocked) card.onclick = () => startLevel(i);
-        grid.appendChild(card);
-    });
-    document.getElementById('totalPoints').innerText = totalInStorage;
+function renderMenu() {
+  const grid = document.getElementById('levelsGrid');
+  grid.innerHTML = '';
+  document.getElementById('totalScoreDisplay').textContent = Object.values(savedScores).reduce((a,b) => a + b, 0);
+  LEVELS.forEach((lv, i) => {
+    const card = document.createElement('div');
+    card.className = 'level-card' + (savedScores[i] !== undefined ? ' completed' : '');
+    card.innerHTML = `<div class="level-icon">${lv.icon}</div><div class="level-name">${lv.name}</div><div class="level-desc">${lv.desc}</div>`;
+    card.onclick = () => startLevel(i);
+    grid.appendChild(card);
+  });
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('intro').classList.add('active');
 }
 
 function startLevel(idx) {
-    curLevelIdx = idx;
-    curQuestIdx = 0;
-    levelScore = 0;
-    correctCount = 0;
-    showScreen('quiz');
-    showQuestion();
+  currentLevel = idx; currentQuestion = 0; score = 0;
+  document.getElementById('quizLevelBadge').textContent = LEVELS[idx].name;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('quiz').classList.add('active');
+  showQuestion();
 }
 
 function showQuestion() {
-    const q = LEVELS[curLevelIdx].questions[curQuestIdx];
-    document.getElementById('levelNameBadge').innerText = LEVELS[curLevelIdx].name;
-    document.getElementById('questionText').innerText = q.q;
-    document.getElementById('liveScore').innerText = levelScore;
-    document.getElementById('progressFill').style.width = ((curQuestIdx / LEVELS[curLevelIdx].questions.length) * 100) + '%';
-    
-    const options = document.getElementById('optionsGrid');
-    options.innerHTML = '';
-    q.opts.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(i);
-        options.appendChild(btn);
-    });
-
-    document.getElementById('feedback').style.display = 'none';
-    document.getElementById('nextBtn').style.display = 'none';
-    resetTimer();
+  clearInterval(timer); timeLeft = 20;
+  const lv = LEVELS[currentLevel], q = lv.questions[currentQuestion];
+  document.getElementById('progressFill').style.width = (currentQuestion / lv.questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = `سؤال ${currentQuestion + 1} من ${lv.questions.length}`;
+  document.getElementById('questionNumber').textContent = `سؤال ${currentQuestion + 1}`;
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('feedbackBox').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  const grid = document.getElementById('optionsGrid'); grid.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button'); btn.className = 'option-btn'; btn.textContent = opt;
+    btn.onclick = () => selectAnswer(i); grid.appendChild(btn);
+  });
+  startTimer();
 }
 
-function resetTimer() {
-    clearInterval(timer);
-    timeLeft = 20;
-    const timerEl = document.getElementById('timer');
-    timerEl.innerText = `⏱ ${timeLeft}`;
-    timerEl.classList.remove('urgent');
-    
-    timer = setInterval(() => {
-        timeLeft--;
-        timerEl.innerText = `⏱ ${timeLeft}`;
-        if(timeLeft <= 5) timerEl.classList.add('urgent');
-        if(timeLeft <= 0) {
-            clearInterval(timer);
-            checkAnswer(-1); // Timeout
-        }
-    }, 1000);
+function startTimer() {
+  document.getElementById('timerDisplay').textContent = `⏱ ${timeLeft}`;
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timerDisplay').textContent = `⏱ ${timeLeft}`;
+    if (timeLeft <= 0) { clearInterval(timer); selectAnswer(-1); }
+  }, 1000);
 }
 
-function checkAnswer(idx) {
-    clearInterval(timer);
-    const q = LEVELS[curLevelIdx].questions[curQuestIdx];
-    const btns = document.querySelectorAll('.option-btn');
-    const feed = document.getElementById('feedback');
-    
-    btns.forEach(b => b.classList.add('disabled'));
-    
-    if(idx === q.correct) {
-        levelScore += (100 + (timeLeft * 5));
-        correctCount++;
-        feed.className = 'feedback-box feedback-correct';
-        feed.innerHTML = `<b>صح!</b> ${q.exp}`;
-        if(idx !== -1) btns[idx].classList.add('correct');
-    } else {
-        feed.className = 'feedback-box feedback-wrong';
-        feed.innerHTML = `<b>خطأ!</b> ${q.exp}`;
-        if(idx !== -1) btns[idx].classList.add('wrong');
-        btns[q.correct].classList.add('correct');
-    }
-    
-    feed.style.display = 'block';
-    document.getElementById('nextBtn').style.display = 'block';
+function selectAnswer(idx) {
+  clearInterval(timer);
+  const q = LEVELS[currentLevel].questions[currentQuestion];
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const isCorrect = idx === q.correct;
+  if (idx !== -1) btns[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) btns[q.correct].classList.add('correct');
+  if (isCorrect) score += 10 + timeLeft;
+  document.getElementById('currentScore').textContent = score;
+  const fb = document.getElementById('feedbackBox');
+  fb.style.display = 'block'; fb.innerHTML = `<b>${isCorrect ? '✅ صح!' : '❌ غلط!'}</b><br>${q.explain}`;
+  document.getElementById('nextBtn').style.display = 'block';
+  if (currentQuestion === LEVELS[currentLevel].questions.length - 1) document.getElementById('nextBtn').textContent = 'نهاية المستوى';
 }
 
-function handleNext() {
-    curQuestIdx++;
-    if(curQuestIdx < LEVELS[curLevelIdx].questions.length) {
-        showQuestion();
-    } else {
-        finishLevel();
-    }
+function nextQuestion() {
+  if (currentQuestion < LEVELS[currentLevel].questions.length - 1) { currentQuestion++; showQuestion(); }
+  else { savedScores[currentLevel] = score; renderMenu(); }
 }
 
-function finishLevel() {
-    showScreen('result');
-    document.getElementById('resCorrect').innerText = `${correctCount} من ${LEVELS[curLevelIdx].questions.length}`;
-    document.getElementById('resScore').innerText = levelScore;
-    
-    const saved = JSON.parse(localStorage.getItem('salesMasterProgress') || '{}');
-    if(!saved[curLevelIdx] || saved[curLevelIdx].score < levelScore) {
-        saved[curLevelIdx] = { score: levelScore };
-        localStorage.setItem('salesMasterProgress', JSON.stringify(saved));
-    }
-}
-
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-}
-
-window.onload = initMenu;
+renderMenu();
 </script>
 </body>
 </html>
