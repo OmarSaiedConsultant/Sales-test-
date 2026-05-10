@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Master 2026 | عمر سعيد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --bg: #0f0f1a;
+            --card-bg: #1a1a2e;
+            --text: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #app { width: 100%; max-width: 700px; }
+
+        /* Screens */
+        .screen { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Elements */
+        .logo { font-size: 64px; text-align: center; margin-bottom: 10px; }
+        .intro-title { font-size: 28px; text-align: center; font-weight: 700; }
+        .intro-sub { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 14px; }
+
+        .levels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .level-card {
+            background: var(--card-bg);
+            border: 2px solid #2a2a4a;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            text-align: center;
+        }
+        .level-card:hover:not(.locked) { border-color: var(--primary); transform: translateY(-5px); background: #232342; }
+        .level-card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .level-card.completed { border-color: var(--success); }
+        
+        .level-icon { font-size: 32px; margin-bottom: 10px; }
+        .level-name { font-size: 16px; font-weight: 700; }
+        .level-desc { font-size: 12px; color: #888; margin-top: 5px; }
+
+        /* Quiz UI */
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #2a2a4a; }
+        .timer-val { background: #1a1a2e; border: 1px solid #333; }
+        .timer-val.urgent { color: var(--danger); border-color: var(--danger); }
+
+        .progress-bar { background: #1a1a2e; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 20px; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.4s; }
+
+        .question-card { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #2a2a4a; margin-bottom: 20px; }
+        .question-text { font-size: 18px; line-height: 1.6; }
+
+        .option-btn {
+            width: 100%; padding: 15px; background: #252545; border: 2px solid transparent;
+            border-radius: 12px; color: #fff; text-align: right; margin-bottom: 10px;
+            cursor: pointer; transition: 0.2s; font-size: 15px;
+        }
+        .option-btn:hover:not(.disabled) { background: #31315e; border-color: var(--primary); }
+        .option-btn.correct { background: #166534 !important; border-color: var(--success); }
+        .option-btn.wrong { background: #991b1b !important; border-color: var(--danger); }
+        .option-btn.disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .feedback-box { padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; border-right: 5px solid; display: none; }
+        .feedback-correct { background: #14532d33; border-color: var(--success); color: #4ade80; }
+        .feedback-wrong { background: #7f1d1d33; border-color: var(--danger); color: #f87171; }
+
+        .btn-primary { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; color: #fff; font-weight: 700; cursor: pointer; }
+        .total-score { text-align: center; background: #6c63ff11; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--primary); }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Intro Screen -->
+    <div id="intro" class="screen active">
+        <div class="logo">🎯</div>
+        <div class="intro-title">Sales Master 2026</div>
+        <div class="intro-sub">محاكاة عملية لدورة عمر سعيد الاحترافية</div>
+        <div class="total-score">مجموع نقاطك الكلي: <span id="totalPoints">0</span></div>
+        <div class="levels-grid" id="levelsGrid"></div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz" class="screen">
+        <div class="quiz-header">
+            <div class="badge" id="levelNameBadge"></div>
+            <div id="timer" class="badge timer-val">⏱ 20</div>
+            <div class="badge" style="color:var(--success)">⭐ <span id="liveScore">0</span></div>
+        </div>
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <div class="question-card">
+            <div id="questionText" class="question-text"></div>
+        </div>
+        <div id="optionsGrid"></div>
+        <div id="feedback" class="feedback-box"></div>
+        <button id="nextBtn" class="btn-primary" style="display:none;" onclick="handleNext()">التالي</button>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result" class="screen" style="text-align: center;">
+        <div id="resultEmoji" style="font-size: 80px;">🏆</div>
+        <h2 id="resultTitle" style="margin: 15px 0;">أحسنت!</h2>
+        <div class="question-card">
+            <p>إجابات صحيحة: <span id="resCorrect" style="color:var(--success)"></span></p>
+            <p>نقاط المستوى: <span id="resScore" style="color:var(--primary)"></span></p>
+        </div>
+        <button class="btn-primary" onclick="location.reload()">العودة للقائمة الرئيسية</button>
+    </div>
+</div>
+
+<script>
+const LEVELS = [
+    {
+        name: "عقلية المقاتل",
+        icon: "⚔️",
+        questions: [
+            {
+                q: "المدير أبلغك بزيادة التارجت 20% وأنت تشعر بالإحباط. كيف تتصرف حسب 'دائرة التأثير'؟",
+                opts: ["تشتكي لزملائك وتنتظر تعديل القرار", "تركز على زيادة عدد مكالماتك وتحسين الـ Script الخاص بك", "تطلب إجازة لتهدئة أعصابك", "تبحث عن شركة أخرى تارجتها أقل"],
+                correct: 1,
+                exp: "عمر سعيد بيقولك: ركز طاقتك فيما تملك (مهارتك ونشاطك)، التارجت قرار خارجي ورد فعلك قرار داخلي."
+            },
+            {
+                q: "ما هو 'الجسر المكسور' في المبيعات؟",
+                opts: ["عدم وجود بضاعة في المخزن", "الفجوة بين مهاراتك الحالية ومتطلبات التارجت", "الخلاف بين السيلز والمدير", "تعطل نظام السيستم في الشركة"],
+                correct: 1,
+                exp: "الجسر المكسور يعني أن أدواتك الحالية لا توفر لك الوصول للهدف، لذا يجب إصلاح الجسر (المهارة) أولاً."
+            }
+        ]
+    },
+    {
+        name: "الخرافات والأنماط",
+        icon: "💡",
+        questions: [
+            {
+                q: "عميل من النمط (المحلل - Analyst) يغرقك في التفاصيل الفنية. ما هو أنجح أسلوب معه؟",
+                opts: ["احكِ له قصص نجاح مؤثرة لعملاء سابقين", "قدم له جداول بيانات، أرقام دقيقة، ومقارنات فنية", "حاول كسبه اجتماعياً بالمزاح والود", "قل له 'ثق فيا نحن الأفضل في السوق'"],
+                correct: 1,
+                exp: "النمط المحلل يحتاج لبيانات صلبة ليشعر بالأمان قبل اتخاذ القرار."
+            },
+            {
+                q: "خرافة 'اتكلم كتير تبيع كتير'.. ما هو البديل العلمي لها؟",
+                opts: ["اصمت تماماً ودع العميل يتحدث", "قاعدة الـ 7 ثواني: اخطف الانتباه أولاً ثم اسأل", "تحدث بسرعة لتنهي المكالمة", "اشرح كل مواصفات المنتج في أول دقيقة"],
+                correct: 1,
+                exp: "العميل يقرر الاستماع لك في أول 7 ثوانٍ، اخطف عقله بـ Hook قوي."
+            }
+        ]
+    },
+    {
+        name: "فلترة العميل (BANT)",
+        icon: "📊",
+        questions: [
+            {
+                q: "عميل مهتم جداً لكن اكتشفت أنه ليس الشخص الذي يوقع الشيكات. ما هو الحرف الناقص في BANT؟",
+                opts: ["حرف B (الميزانية)", "حرف A (الصلاحية - Authority)", "حرف N (الاحتياج)", "حرف T (الوقت)"],
+                correct: 1,
+                exp: "بدون الوصول لصاحب الصلاحية (Authority)، أنت تبيع لرسول وليس للمشتري الحقيقي."
+            },
+            {
+                q: "إذا كان الـ Conversion Rate الخاص بك 2%، فكم Lead تحتاج لتحقيق 10 بيعات؟",
+                opts: ["200 Lead", "500 Lead", "100 Lead", "1000 Lead"],
+                correct: 1,
+                exp: "لعبة الأرقام: 2% تعني 2 من كل 100، إذن تحتاج 500 لتصل لـ 10."
+            }
+        ]
+    },
+    {
+        name: "احتراف المكالمة",
+        icon: "📞",
+        questions: [
+            {
+                q: "العميل يقول: 'أنا مشغول، ادخل في الموضوع وقولي السعر'. كيف تستخدم الـ Trailer هنا؟",
+                opts: ["تعطيه السعر فوراً", "تقول: 'أنا لن أبيع لك الآن، لكن سأخبرك في 30 ثانية كيف نوفر لعملائنا 20% من تكاليفهم'", "تعتذر وتغلق الخط", "تقول له أن السعر سيعرفه في نهاية العرض"],
+                correct: 1,
+                exp: "الـ Trailer Technique تهدف لخلق فضول يجعله يفرغ لك وقته فوراً."
+            },
+            {
+                q: "ما هي لعبة 'البينج بونج' في المكالمة البيعية؟",
+                opts: ["أن تتحدث بسرعة فائقة", "تبادل الأسئلة والإجابات لخلق حوار وليس مونولوج", "أن ترمي المسؤولية على المدير", "تكرار السعر أكثر من مرة"],
+                correct: 1,
+                exp: "البيع هو حوار متبادل (Ping-Pong)، إذا كنت أنت الوحيد الذي يتحدث فأنت لا تبيع."
+            }
+        ]
+    },
+    {
+        name: "المنطقة العمياء",
+        icon: "🛡️",
+        questions: [
+            {
+                q: "عميل يقول: 'أتعامل مع شركة أخرى منذ 5 سنوات ومرتاح'. كيف تكتشف الـ Blind Spot؟",
+                opts: ["قل له أن شركتك أرخص", "اسأله: 'لو هناك شيء واحد تتمنى تحسينه في خدمتهم الحالية، ماذا سيكون؟'", "هاجم الشركة المنافسة", "استسلم وابحث عن عميل غيره"],
+                correct: 1,
+                exp: "هذا السؤال يجعله يبحث عن 'النقص' الذي لم يكن يلاحظه بسبب الاعتياد."
+            },
+            {
+                q: "متى تستخدم لغة 'الغريزة' في الإقناع؟",
+                opts: ["مع الموظفين الصغار", "مع أصحاب القرار لتحفيز الخوف من الخسارة أو الطمع في الربح", "عند شرح التفاصيل الفنية", "عند تقديم خصم بسيط"],
+                correct: 1,
+                exp: "أصحاب القرار تحركهم الغرائز الأساسية (الخوف من فقدان الحصة السوقية أو الرغبة في السيطرة)."
+            }
+        ]
+    },
+    {
+        name: "الإغلاق الساحق",
+        icon: "🏆",
+        questions: [
+            {
+                q: "منتجك سعره 12,000 جنيه والعميل يراه مرتفعاً. كيف تستخدم 'سحر الأرقام'؟",
+                opts: ["تقول له 'الجودة تكلف دائماً'", "تقول له 'تكلفته عليك هي 33 جنيه يومياً.. أقل من سعر وجبة غداء'", "تعطيه خصم 50% فوراً", "تقول له 'يمكنك الدفع كاش'"],
+                correct: 1,
+                exp: "تفتيت السعر (Chunking) يزيل الألم النفسي المرتبط بالرقم الكبير."
+            },
+            {
+                q: "ما هو 'التعاطف التكتيكي'؟",
+                opts: ["أن تشفق على ظروف العميل", "أن تعكس مشاعر العميل وكلماته ليشعر أنك تفهمه تماماً وتكسر دفاعاته", "أن توافق على كل طلباته", "أن تحكي له مشاكلك الشخصية"],
+                correct: 1,
+                exp: "التعاطف التكتيكي أداة مخابراتية تجعل العميل يثق بك لا شعورياً."
+            }
+        ]
+    }
+];
+
+let curLevelIdx = 0;
+let curQuestIdx = 0;
+let totalScore = 0;
+let levelScore = 0;
+let correctCount = 0;
+let timer;
+let timeLeft = 20;
+
+function initMenu() {
+    const grid = document.getElementById('levelsGrid');
+    grid.innerHTML = '';
+    const saved = JSON.parse(localStorage.getItem('salesMasterProgress') || '{}');
+    let totalInStorage = 0;
+
+    LEVELS.forEach((lv, i) => {
+        const isLocked = i > 0 && !saved[i-1];
+        const isDone = saved[i];
+        if(isDone) totalInStorage += isDone.score;
+
+        const card = document.createElement('div');
+        card.className = `level-card ${isLocked ? 'locked' : ''} ${isDone ? 'completed' : ''}`;
+        card.innerHTML = `
+            <div class="level-icon">${lv.icon}</div>
+            <div class="level-name">${lv.name}</div>
+            <div class="level-desc">${lv.questions.length} مواقف بيعية</div>
+            ${isDone ? '<div style="color:var(--success); font-size:12px;">✅ مكتمل</div>' : ''}
+        `;
+        if(!isLocked) card.onclick = () => startLevel(i);
+        grid.appendChild(card);
+    });
+    document.getElementById('totalPoints').innerText = totalInStorage;
+}
+
+function startLevel(idx) {
+    curLevelIdx = idx;
+    curQuestIdx = 0;
+    levelScore = 0;
+    correctCount = 0;
+    showScreen('quiz');
+    showQuestion();
+}
+
+function showQuestion() {
+    const q = LEVELS[curLevelIdx].questions[curQuestIdx];
+    document.getElementById('levelNameBadge').innerText = LEVELS[curLevelIdx].name;
+    document.getElementById('questionText').innerText = q.q;
+    document.getElementById('liveScore').innerText = levelScore;
+    document.getElementById('progressFill').style.width = ((curQuestIdx / LEVELS[curLevelIdx].questions.length) * 100) + '%';
+    
+    const options = document.getElementById('optionsGrid');
+    options.innerHTML = '';
+    q.opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(i);
+        options.appendChild(btn);
+    });
+
+    document.getElementById('feedback').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'none';
+    resetTimer();
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    timeLeft = 20;
+    const timerEl = document.getElementById('timer');
+    timerEl.innerText = `⏱ ${timeLeft}`;
+    timerEl.classList.remove('urgent');
+    
+    timer = setInterval(() => {
+        timeLeft--;
+        timerEl.innerText = `⏱ ${timeLeft}`;
+        if(timeLeft <= 5) timerEl.classList.add('urgent');
+        if(timeLeft <= 0) {
+            clearInterval(timer);
+            checkAnswer(-1); // Timeout
+        }
+    }, 1000);
+}
+
+function checkAnswer(idx) {
+    clearInterval(timer);
+    const q = LEVELS[curLevelIdx].questions[curQuestIdx];
+    const btns = document.querySelectorAll('.option-btn');
+    const feed = document.getElementById('feedback');
+    
+    btns.forEach(b => b.classList.add('disabled'));
+    
+    if(idx === q.correct) {
+        levelScore += (100 + (timeLeft * 5));
+        correctCount++;
+        feed.className = 'feedback-box feedback-correct';
+        feed.innerHTML = `<b>صح!</b> ${q.exp}`;
+        if(idx !== -1) btns[idx].classList.add('correct');
+    } else {
+        feed.className = 'feedback-box feedback-wrong';
+        feed.innerHTML = `<b>خطأ!</b> ${q.exp}`;
+        if(idx !== -1) btns[idx].classList.add('wrong');
+        btns[q.correct].classList.add('correct');
+    }
+    
+    feed.style.display = 'block';
+    document.getElementById('nextBtn').style.display = 'block';
+}
+
+function handleNext() {
+    curQuestIdx++;
+    if(curQuestIdx < LEVELS[curLevelIdx].questions.length) {
+        showQuestion();
+    } else {
+        finishLevel();
+    }
+}
+
+function finishLevel() {
+    showScreen('result');
+    document.getElementById('resCorrect').innerText = `${correctCount} من ${LEVELS[curLevelIdx].questions.length}`;
+    document.getElementById('resScore').innerText = levelScore;
+    
+    const saved = JSON.parse(localStorage.getItem('salesMasterProgress') || '{}');
+    if(!saved[curLevelIdx] || saved[curLevelIdx].score < levelScore) {
+        saved[curLevelIdx] = { score: levelScore };
+        localStorage.setItem('salesMasterProgress', JSON.stringify(saved));
+    }
+}
+
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+window.onload = initMenu;
+</script>
+</body>
+</html>
